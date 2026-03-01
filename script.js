@@ -2,91 +2,14 @@ const images = [
     'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070',
     'https://images.unsplash.com/photo-1516331138075-f3ad1576e0c1?q=80&w=2000',
     'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000',
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2000'// Background Image Gallery
-const images = [
-    'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070',
-    'https://images.unsplash.com/photo-1516331138075-f3ad1576e0c1?q=80&w=2000',
-    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000',
     'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2000'
 ];
 let currentImageIndex = 0;
 
 function changeBackground() {
-    // Applying a dark overlay so white timer text remains visible
     document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${images[currentImageIndex]}')`;
     currentImageIndex = (currentImageIndex + 1) % images.length;
 }
-
-// Set initial background
-changeBackground();
-
-// Timer Logic
-const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
-const alarmSound = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-
-let startingTime = 25 * 60; 
-let timeLeft = startingTime; 
-let timerInterval;
-let sessionsCompleted = 0;
-
-const display = document.getElementById('timer-display');
-const sessionDisplay = document.getElementById('session-count');
-
-function updateDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    display.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-}
-
-function startTimer() {
-    clickSound.play();
-    if (timerInterval) return; 
-    
-    timerInterval = setInterval(() => {
-        if (timeLeft > 0) {
-            timeLeft--;
-            updateDisplay();
-        } else {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            alarmSound.play();
-            sessionsCompleted++;
-            sessionDisplay.innerText = sessionsCompleted;
-            alert("Focus session complete!");
-        }
-    }, 1000);
-}
-
-function pauseTimer() {
-    clickSound.play();
-    clearInterval(timerInterval);
-    timerInterval = null;
-}
-
-function resetTimer() {
-    clickSound.play();
-    pauseTimer();
-    timeLeft = startingTime;
-    updateDisplay();
-}
-
-function setCustomTime() {
-    const input = document.getElementById('user-minutes');
-    if (input.value > 0) {
-        pauseTimer();
-        startingTime = input.value * 60;
-        timeLeft = startingTime;
-        updateDisplay();
-        input.value = '';
-    }
-}
-];
-let currentImageIndex = 0;
-
-function changeBackground() {
-    document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${images[currentImageIndex]}')`;
-    currentImageIndex = (currentImageIndex + 1) % images.length;
-}
 changeBackground();
 
 const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
@@ -147,4 +70,3 @@ function setCustomTime() {
         input.value = '';
     }
 }
-
