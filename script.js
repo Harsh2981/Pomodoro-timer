@@ -1,23 +1,17 @@
-// 1. Background Image Gallery
 const images = [
-    'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070', // Coffee desk
-    'https://images.unsplash.com/photo-1516331138075-f3ad1576e0c1?q=80&w=2000', // Night stars
-    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000', // Ocean beach
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2000'  // Forest
+    'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070',
+    'https://images.unsplash.com/photo-1516331138075-f3ad1576e0c1?q=80&w=2000',
+    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000',
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2000'
 ];
-
 let currentImageIndex = 0;
 
 function changeBackground() {
+    document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${images[currentImageIndex]}')`;
     currentImageIndex = (currentImageIndex + 1) % images.length;
-    // Apply the image with a dark overlay to keep the text readable
-    document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${images[currentImageIndex]}')`;
 }
-
-// Set the initial background when the page loads
 changeBackground();
 
-// --- REST OF YOUR TIMER CODE ---
 const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
 const alarmSound = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
 
@@ -48,7 +42,7 @@ function startTimer() {
             alarmSound.play();
             sessionsCompleted++;
             sessionDisplay.innerText = sessionsCompleted;
-            alert("Great job! Session complete.");
+            alert("Focus session complete!");
         }
     }, 1000);
 }
@@ -67,13 +61,12 @@ function resetTimer() {
 }
 
 function setCustomTime() {
-    clickSound.play();
-    const minutesInput = document.getElementById('user-minutes').value;
-    if (minutesInput > 0) {
+    const input = document.getElementById('user-minutes');
+    if (input.value > 0) {
         pauseTimer();
-        startingTime = minutesInput * 60;
+        startingTime = input.value * 60;
         timeLeft = startingTime;
         updateDisplay();
-        document.getElementById('user-minutes').value = '';
+        input.value = '';
     }
 }
