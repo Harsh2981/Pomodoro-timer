@@ -23,7 +23,7 @@
             text-align: center;
         }
 
-        /* --- BIG TIMER --- */
+        /* --- TIMER DISPLAY --- */
         #timer-display {
             font-size: 14rem; 
             font-weight: 900;
@@ -40,7 +40,7 @@
             opacity: 0.8;
         }
 
-        /* --- GLASS BUTTONS --- */
+        /* --- CONTROL BUTTONS --- */
         .controls {
             display: flex;
             gap: 15px;
@@ -81,14 +81,15 @@
             color: white;
             width: 100px;
             text-align: center;
+            outline: none;
         }
 
-        /* --- LOCAL MUSIC ISLAND (Bottom Right) --- */
+        /* --- MUSIC ISLAND (Bottom Right) --- */
         .music-island {
             position: fixed;
             bottom: 25px;
             right: 25px;
-            width: 200px;
+            width: 240px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -101,20 +102,27 @@
         .music-controls {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             margin-top: 10px;
         }
 
         .music-btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: white;
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            transition: all 0.2s;
         }
 
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- BG SWITCHER (Bottom Left) --- */
         #bg-switcher {
             position: fixed;
             bottom: 25px;
@@ -122,14 +130,15 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            padding: 12px 20px;
+            padding: 12px 25px;
             border-radius: 50px;
             cursor: pointer;
             backdrop-filter: blur(10px);
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
-            #timer-display { font-size: 8rem; }
+            #timer-display { font-size: 7rem; letter-spacing: -2px; }
             .music-island { display: none; }
         }
     </style>
@@ -153,11 +162,12 @@
     <button id="bg-switcher" onclick="changeBackground()">🖼️ Switch Scene</button>
 
     <div class="music-island">
-        <div id="track-label" style="font-size: 0.8rem; margin-bottom: 5px; opacity: 0.7;">TRACK 1</div>
+        <div id="track-label" style="font-size: 0.75rem; font-weight: bold; letter-spacing: 1px; margin-bottom: 8px; opacity: 0.8;">ALPHA WAVES</div>
         <div class="music-controls">
             <button class="music-btn" onclick="prevTrack()">⏮</button>
             <button class="music-btn" id="play-pause-btn" onclick="toggleMusic()">▶</button>
             <button class="music-btn" onclick="nextTrack()">⏭</button>
+            <button class="music-btn" id="repeat-btn" onclick="toggleRepeat()" style="opacity: 0.5;">🔁</button>
         </div>
     </div>
 
