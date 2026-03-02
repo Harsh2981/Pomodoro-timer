@@ -1,28 +1,24 @@
-// --- BACKGROUND SCENES ---
+// --- BACKGROUNDS (Matches your filenames exactly) ---
 const images = [
-     'Green water.jpg',
-     'Grey Mountains.jpg',
-     'The street.jpg',
-    'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070',
-    'https://images.unsplash.com/photo-1516331138075-f3ad1576e0c1?q=80&w=2000',
-    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000',
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2000'
+    'Green water.jpg',
+    'Grey Mountains.jpg',
+    'The street.jpg'
 ];
 let currentImageIndex = 0;
 
 function changeBackground() {
+    // We add a dark overlay so the white text is always readable
     document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${images[currentImageIndex]}')`;
     currentImageIndex = (currentImageIndex + 1) % images.length;
 }
+// Run once on load
 changeBackground();
 
-// --- TRACKING & TIMER LOGIC ---
-let startingTime = 25 * 60; 
-let timeLeft = startingTime; 
+// --- TIMER & TRACKING ---
+let startingTime = 25 * 60;
+let timeLeft = startingTime;
 let timerInterval = null;
 let isBreakMode = false;
-
-// Statistics
 let focusSeconds = 0;
 let breakSeconds = 0;
 
@@ -43,13 +39,11 @@ function updateDisplay() {
 }
 
 function startTimer() {
-    if (timerInterval) return; 
+    if (timerInterval) return;
     timerInterval = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
             updateDisplay();
-            
-            // Increment the correct tracker
             if (!isBreakMode) {
                 focusSeconds++;
                 focusDisplay.innerText = formatStatsTime(focusSeconds);
@@ -60,7 +54,7 @@ function startTimer() {
         } else {
             clearInterval(timerInterval);
             timerInterval = null;
-            alert(isBreakMode ? "Break is over!" : "Focus session finished!");
+            alert(isBreakMode ? "Break Over!" : "Focus Over!");
         }
     }, 1000);
 }
@@ -89,7 +83,7 @@ function setCustomTime() {
     const input = document.getElementById('user-minutes');
     if (input.value > 0) {
         pauseTimer();
-        isBreakMode = false; // Custom time assumes a new focus session
+        isBreakMode = false;
         startingTime = input.value * 60;
         timeLeft = startingTime;
         updateDisplay();
@@ -98,16 +92,14 @@ function setCustomTime() {
 }
 
 function resetStats() {
-    if(confirm("Reset focus and break timers to zero?")) {
-        focusSeconds = 0;
-        breakSeconds = 0;
-        focusDisplay.innerText = "0m 0s";
-        breakDisplay.innerText = "0m 0s";
-    }
+    focusSeconds = 0;
+    breakSeconds = 0;
+    focusDisplay.innerText = "0m 0s";
+    breakDisplay.innerText = "0m 0s";
 }
 
-// --- FOCUS MUSIC PLAYER ---
-const tracks = ['Alpha waves 1.mp3', 'White Noise 1.mp3']; 
+// --- MUSIC PLAYER (Matches your .mp3 filenames) ---
+const tracks = ['Alpha waves 1.mp3', 'White Noise 1.mp3'];
 let currentTrackIndex = 0;
 let isPlaying = false;
 let isRepeating = false;
@@ -117,16 +109,12 @@ const playBtn = document.getElementById('play-pause-btn');
 const repeatBtn = document.getElementById('repeat-btn');
 const trackLabel = document.getElementById('track-label');
 
-function formatTrackName(filename) {
-    return filename.replace('.m4a', '').toUpperCase();
-}
-
 function toggleMusic() {
     if (isPlaying) {
         audio.pause();
         playBtn.innerText = '▶';
     } else {
-        audio.play().catch(e => console.log("Click required"));
+        audio.play().catch(e => console.log("Blocked: Click the page first."));
         playBtn.innerText = '⏸';
     }
     isPlaying = !isPlaying;
@@ -135,28 +123,18 @@ function toggleMusic() {
 function toggleRepeat() {
     isRepeating = !isRepeating;
     repeatBtn.style.opacity = isRepeating ? "1" : "0.5";
-    repeatBtn.style.textShadow = isRepeating ? "0 0 10px white" : "none";
-}
-
-function handleTrackEnd() {
-    if (isRepeating) {
-        audio.currentTime = 0;
-        audio.play();
-    } else {
-        nextTrack();
-    }
 }
 
 function loadTrack(index) {
     audio.pause();
     currentTrackIndex = index;
     audio = new Audio(tracks[currentTrackIndex]);
-    trackLabel.innerText = formatTrackName(tracks[currentTrackIndex]);
-    audio.onended = () => handleTrackEnd();
+    trackLabel.innerText = tracks[currentTrackIndex].replace('.mp3', '').toUpperCase();
+    audio.onended = () => { if (isRepeating) { audio.currentTime = 0; audio.play(); } else { nextTrack(); } };
     if (isPlaying) audio.play();
 }
 
 function nextTrack() { loadTrack((currentTrackIndex + 1) % tracks.length); }
 function prevTrack() { loadTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
 
-audio.onended = () => handleTrackEnd();
+audio.onended = () => { if (isRepeating) { audio.currentTime = 0; audio.play(); } else { nextTrack(); } };
