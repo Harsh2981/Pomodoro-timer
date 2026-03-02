@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="UTF-8">
+     <meta charset="UTF-8">
     <title>Cozy Pomodoro | Aesthetic Timer & To-Do List</title>
     <link rel="icon" href="https://fav.farm/⚪">
 <meta name="title" content="Cozy Pomodoro | Aesthetic Timer & To-Do List">
@@ -24,7 +24,6 @@
 <meta property="twitter:image" content="Green water.jpg">
     <meta name="google-site-verification" content="X0jDkOLlZfhkYQHPPcTD-as4DgMip59ykwxtzymYfMg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <style>
         * { box-sizing: border-box; }
         body {
@@ -59,15 +58,43 @@
         .stat-value { font-size: 1.2rem; font-weight: bold; display: block; }
         .stat-label { font-size: 0.7rem; opacity: 0.7; letter-spacing: 1px; }
 
+        /* Mode Switcher */
+        .mode-switch {
+    margin-bottom: 15px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: 0.3s;
+    /* FIX THE GLITCH: */
+    display: inline-block; 
+    user-select: none; /* Prevents text from being highlighted while clicking */
+    padding: 10px;    /* Gives your mouse a bigger area to click */
+}
+
+.mode-switch:hover { 
+    opacity: 1; 
+    transform: scale(1.05); /* Smoothly grows instead of glitching */
+}
+
+.active-mode { 
+    font-weight: bold; 
+    color: #afffaf; 
+    opacity: 1; 
+    text-shadow: 0 0 10px rgba(175, 255, 175, 0.5); /* Glow effect */
+}
+        .mode-switch:hover { opacity: 1; }
+        .active-mode { font-weight: bold; color: #afffaf; opacity: 1; }
+
         #timer-display { font-size: 12rem; font-weight: 900; margin: 0; line-height: 0.8; letter-spacing: -5px; }
 
-        /* Panels (To-Do & Settings) */
+        /* Side Panels */
         .side-panel {
             position: fixed;
             top: 20px;
             bottom: 80px;
             width: 300px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(20px);
             border-radius: 25px;
             border: 1px solid rgba(255,255,255,0.1);
@@ -83,7 +110,6 @@
 
         .panel-header { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; }
         
-        /* Inputs */
         input {
             width: 100%;
             background: rgba(255,255,255,0.1);
@@ -119,26 +145,22 @@
             font-weight: bold;
             text-transform: uppercase;
             font-size: 0.75rem;
-            transition: 0.3s;
         }
-        .glass-btn:hover { background: rgba(255,255,255,0.2); }
 
-        .music-island { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); padding: 15px; border-radius: 20px; width: 220px; border: 1px solid rgba(255,255,255,0.1); }
-        
-        /* Bottom Row Buttons */
         .bottom-nav { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 10px; }
+        .music-island { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); padding: 15px; border-radius: 20px; width: 220px; border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
     <div class="side-panel" id="todo-panel">
-        <div class="panel-header">Tasks <span>📝</span></div>
+        <div class="panel-header">Tasks 📝</div>
         <input type="text" id="todo-input" placeholder="Add a task..." onkeypress="if(event.key==='Enter') addTask()">
         <ul class="todo-list" id="todo-list"></ul>
     </div>
 
     <div class="side-panel" id="settings-panel">
-        <div class="panel-header">Settings <span>⚙️</span></div>
+        <div class="panel-header">Settings ⚙️</div>
         <label style="font-size: 0.7rem; opacity: 0.8;">FOCUS MINUTES</label>
         <input type="number" id="focus-input" value="25">
         <label style="font-size: 0.7rem; opacity: 0.8;">BREAK MINUTES</label>
@@ -152,12 +174,17 @@
         <button onclick="resetStats()" style="background:none; border:none; color:white; cursor:pointer;">🔄</button>
     </div>
 
+    <div class="mode-switch" onclick="toggleTimerMode()">
+        <span id="pomo-label" class="active-mode">POMODORO</span> | 
+        <span id="stopwatch-label">STOPWATCH</span>
+    </div>
+
     <h1 id="timer-display">25:00</h1>
 
     <div class="controls">
         <button class="glass-btn" onclick="startTimer()">Start</button>
         <button class="glass-btn" onclick="pauseTimer()">Pause</button>
-        <button class="glass-btn" onclick="runBreak()" style="color: #afffaf;">Break</button>
+        <button class="glass-btn" onclick="runBreak()" id="break-btn" style="color: #afffaf;">Break</button>
         <button class="glass-btn" onclick="resetTimer()">Reset</button>
     </div>
 
@@ -170,9 +197,9 @@
     <div class="music-island">
         <div id="track-label" style="font-size: 0.7rem; margin-bottom: 8px; font-weight: bold;">ALPHA WAVES 1</div>
         <div style="display: flex; gap: 8px; justify-content: center;">
-            <button style="background:none; border:1px solid rgba(255,255,255,0.2); color:white; cursor:pointer;" onclick="prevTrack()">⏮</button>
-            <button style="background:none; border:1px solid rgba(255,255,255,0.2); color:white; cursor:pointer;" id="play-pause-btn" onclick="toggleMusic()">▶</button>
-            <button style="background:none; border:1px solid rgba(255,255,255,0.2); color:white; cursor:pointer;" onclick="nextTrack()">⏭</button>
+            <button style="background:none; border:1px solid rgba(255,255,255,0.2); color:white;" onclick="prevTrack()">⏮</button>
+            <button style="background:none; border:1px solid rgba(255,255,255,0.2); color:white;" id="play-pause-btn" onclick="toggleMusic()">▶</button>
+            <button style="background:none; border:1px solid rgba(255,255,255,0.2); color:white;" onclick="nextTrack()">⏭</button>
         </div>
     </div>
 
