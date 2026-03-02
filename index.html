@@ -23,6 +23,7 @@
             text-align: center;
         }
 
+        /* --- STATS & TIMER --- */
         .stats-island {
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
@@ -37,40 +38,53 @@
         .stat-value { font-size: 1.2rem; font-weight: bold; display: block; }
         .stat-label { font-size: 0.7rem; opacity: 0.7; letter-spacing: 1px; }
 
-        #timer-display {
-            font-size: 12rem;
-            font-weight: 900;
-            margin: 0;
-            line-height: 0.8;
-            letter-spacing: -5px;
-        }
+        #timer-display { font-size: 12rem; font-weight: 900; margin: 0; line-height: 0.8; letter-spacing: -5px; }
 
-        .controls { display: flex; gap: 15px; margin-top: 30px; }
-        
-        /* Settings Styles */
-        .settings-container {
-            margin-top: 30px;
-            display: flex;
-            gap: 15px;
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
+        /* --- TO-DO LIST PANEL --- */
+        .todo-island {
+            position: fixed;
+            left: -320px; /* Hidden by default */
+            top: 20px;
+            bottom: 80px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 25px;
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            z-index: 100;
         }
-        .setting-group { display: flex; flex-direction: column; gap: 5px; }
-        .setting-label { font-size: 0.6rem; font-weight: bold; opacity: 0.8; }
+        .todo-island.active { left: 20px; }
         
-        .glass-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px;
-            border-radius: 8px;
+        .todo-header { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        
+        #todo-input {
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 10px;
             color: white;
-            width: 70px;
-            text-align: center;
-            outline: none;
+            margin-bottom: 15px;
         }
+        
+        .todo-list { list-style: none; padding: 0; max-height: 350px; overflow-y: auto; }
+        .todo-item {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .todo-item button { background: none; border: none; color: #ff6b6b; cursor: pointer; font-weight: bold; }
 
+        /* --- BUTTONS & CONTROLS --- */
+        .controls { display: flex; gap: 15px; margin-top: 30px; }
         .glass-btn {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -82,32 +96,27 @@
             font-weight: bold;
             text-transform: uppercase;
             font-size: 0.8rem;
-            transition: 0.3s;
         }
-        .glass-btn:hover { background: rgba(255,255,255,0.2); }
 
-        .music-island {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(15px);
-            padding: 15px;
-            border-radius: 20px;
-            width: 220px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .music-island { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); padding: 15px; border-radius: 20px; width: 220px; border: 1px solid rgba(255,255,255,0.1); }
         .music-btn { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-
+        
+        #todo-toggle { position: fixed; bottom: 20px; left: 160px; z-index: 101; }
         #bg-switcher { position: fixed; bottom: 20px; left: 20px; }
     </style>
 </head>
 <body>
 
+    <div class="todo-island" id="todo-panel">
+        <div class="todo-header">Tasks <span>📝</span></div>
+        <input type="text" id="todo-input" placeholder="What needs doing?" onkeypress="if(event.key==='Enter') addTask()">
+        <ul class="todo-list" id="todo-list"></ul>
+    </div>
+
     <div class="stats-island">
         <div><span class="stat-label">FOCUS</span><span id="focus-total" class="stat-value">0m 0s</span></div>
         <div><span class="stat-label">BREAK</span><span id="break-total" class="stat-value">0m 0s</span></div>
-        <button onclick="resetStats()" style="background:none; border:none; color:white; cursor:pointer; font-size: 1.2rem;">🔄</button>
+        <button onclick="resetStats()" style="background:none; border:none; color:white; cursor:pointer;">🔄</button>
     </div>
 
     <h1 id="timer-display">25:00</h1>
@@ -115,26 +124,15 @@
     <div class="controls">
         <button class="glass-btn" onclick="startTimer()">Start</button>
         <button class="glass-btn" onclick="pauseTimer()">Pause</button>
-        <button class="glass-btn" id="break-btn-trigger" onclick="runBreak()" style="color: #afffaf;">Break</button>
+        <button class="glass-btn" onclick="runBreak()" style="color: #afffaf;">Break</button>
         <button class="glass-btn" onclick="resetTimer()">Reset</button>
     </div>
 
-    <div class="settings-container">
-        <div class="setting-group">
-            <span class="setting-label">FOCUS MINS</span>
-            <input type="number" id="focus-input" class="glass-input" value="25">
-        </div>
-        <div class="setting-group">
-            <span class="setting-label">BREAK MINS</span>
-            <input type="number" id="break-input" class="glass-input" value="5">
-        </div>
-        <button class="glass-btn" style="margin-top: 15px;" onclick="applySettings()">Apply</button>
-    </div>
-
-    <button id="bg-switcher" class="glass-btn" onclick="changeBackground()">🖼️ Switch Scene</button>
+    <button id="bg-switcher" class="glass-btn" onclick="changeBackground()">🖼️ Scene</button>
+    <button id="todo-toggle" class="glass-btn" onclick="toggleTodo()">📝 Tasks</button>
 
     <div class="music-island">
-        <div id="track-label" style="font-size: 0.7rem; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px;">ALPHA WAVES 1</div>
+        <div id="track-label" style="font-size: 0.7rem; margin-bottom: 8px; font-weight: bold;">ALPHA WAVES 1</div>
         <div style="display: flex; gap: 8px; justify-content: center;">
             <button class="music-btn" onclick="prevTrack()">⏮</button>
             <button class="music-btn" id="play-pause-btn" onclick="toggleMusic()">▶</button>
