@@ -6,6 +6,60 @@ function changeBackground() {
     currentImg = (currentImg + 1) % images.length;
 }
 changeBackground();
+let isStopwatch = false; // New state
+let stopwatchSecs = 0;   // New counter
+
+function toggleTimerMode() {
+    pauseTimer();
+    isStopwatch = !isStopwatch;
+    
+    // Update UI labels
+    document.getElementById('pomo-label').classList.toggle('active-mode');
+    document.getElementById('stopwatch-label').classList.toggle('active-mode');
+    
+    // Reset display
+    if (isStopwatch) {
+        stopwatchSecs = 0;
+        document.getElementById('timer-display').innerText = "0:00";
+    } else {
+        timeLeft = focusMins * 60;
+        updateDisplay();
+    }
+}
+
+function startTimer() {
+    if (timerVar) return;
+    timerVar = setInterval(() => {
+        if (isStopwatch) {
+            // STOPWATCH MODE (Count Up)
+            stopwatchSecs++;
+            const m = Math.floor(stopwatchSecs / 60);
+            const s = stopwatchSecs % 60;
+            document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            
+            // Still track focus stats
+            focusSecs++; 
+            document.getElementById('focus-total').innerText = `${Math.floor(focusSecs/60)}m ${focusSecs%60}s`;
+            
+        } else {
+            // POMODORO MODE (Count Down)
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateDisplay();
+                if (!isBreak) { 
+                    focusSecs++; 
+                    document.getElementById('focus-total').innerText = `${Math.floor(focusSecs/60)}m ${focusSecs%60}s`;
+                } else { 
+                    breakSecs++; 
+                    document.getElementById('break-total').innerText = `${Math.floor(breakSecs/60)}m ${breakSecs%60}s`;
+                }
+            } else {
+                pauseTimer();
+                alert(isBreak ? "Break Over!" : "Focus Done!");
+            }
+        }
+    }, 1000);
+}
 
 // 2. Timer Variables
 let focusMins = 25;
@@ -94,3 +148,4 @@ function loadTrack(idx) {
 
 function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); }
 function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); }
+
