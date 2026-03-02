@@ -1,8 +1,8 @@
-// --- BACKGROUNDS ---
+// --- BACKGROUND SCENES ---
 const images = [
      'Green water.jpg',
      'Grey Mountains.jpg',
-    'The street.jpg',
+     'The street.jpg',
     'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070',
     'https://images.unsplash.com/photo-1516331138075-f3ad1576e0c1?q=80&w=2000',
     'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000',
@@ -16,7 +16,7 @@ function changeBackground() {
 }
 changeBackground();
 
-// --- TIMER LOGIC ---
+// --- POMODORO TIMER ---
 let startingTime = 25 * 60; 
 let timeLeft = startingTime; 
 let timerInterval = null;
@@ -69,49 +69,67 @@ function setCustomTime() {
     }
 }
 
-// --- LOCAL MUSIC PLAYER ---
-// Update these names if your files are different!
-const tracks = ['LXbJOhbt954Nc2UxhHsw+_WcAnBE1NjU.m4a']; 
+// --- FOCUS MUSIC PLAYER ---
+const tracks = ['Alpha waves 1.mp3', 'White Noise 1.mp3']; 
 let currentTrackIndex = 0;
 let isPlaying = false;
+let isRepeating = false;
 let audio = new Audio(tracks[currentTrackIndex]);
 
 const playBtn = document.getElementById('play-pause-btn');
+const repeatBtn = document.getElementById('repeat-btn');
 const trackLabel = document.getElementById('track-label');
+
+function formatTrackName(filename) {
+    return filename.replace('.m4a', '').toUpperCase();
+}
 
 function toggleMusic() {
     if (isPlaying) {
         audio.pause();
         playBtn.innerText = '▶';
     } else {
-        audio.play().catch(e => console.log("Audio play blocked until user interacts with page."));
+        audio.play().catch(e => console.log("Interaction needed for play"));
         playBtn.innerText = '⏸';
     }
     isPlaying = !isPlaying;
+}
+
+function toggleRepeat() {
+    isRepeating = !isRepeating;
+    repeatBtn.style.opacity = isRepeating ? "1" : "0.5";
+    repeatBtn.style.textShadow = isRepeating ? "0 0 10px white" : "none";
+}
+
+function handleTrackEnd() {
+    if (isRepeating) {
+        audio.currentTime = 0;
+        audio.play();
+    } else {
+        nextTrack();
+    }
 }
 
 function loadTrack(index) {
     audio.pause();
     currentTrackIndex = index;
     audio = new Audio(tracks[currentTrackIndex]);
-    trackLabel.innerText = `TRACK ${currentTrackIndex + 1}`;
-    if (isPlaying) audio.play();
+    trackLabel.innerText = formatTrackName(tracks[currentTrackIndex]);
     
-    // Auto-play next when finished
-    audio.onended = () => nextTrack();
+    audio.onended = () => handleTrackEnd();
+    
+    if (isPlaying) {
+        audio.play().catch(e => console.log("Playback error"));
+    }
 }
 
 function nextTrack() {
-    let nextIndex = (currentTrackIndex + 1) % tracks.length;
-    loadTrack(nextIndex);
+    loadTrack((currentTrackIndex + 1) % tracks.length);
 }
 
 function prevTrack() {
-    let prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-    loadTrack(prevIndex);
+    loadTrack((currentTrackIndex - 1 + tracks.length) % tracks.length);
 }
 
-// Ensure the first track has the "onended" listener
-audio.onended = () => nextTrack();
-
-
+// Initial Listener
+audio.onended = () => handleTrackEnd();
