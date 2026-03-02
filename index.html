@@ -32,12 +32,16 @@
             letter-spacing: -8px;
         }
 
-        .session-info {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 10px;
-            opacity: 0.8;
+      <div class="stats-container" style="display: flex; gap: 20px; margin-bottom: 15px;">
+    <div class="stat-box">
+        <div style="font-size: 0.7rem; opacity: 0.6; letter-spacing: 2px;">FOCUS</div>
+        <div id="focus-total" style="font-size: 1.5rem; font-weight: bold;">0m 0s</div>
+    </div>
+    <div class="stat-box">
+        <div style="font-size: 0.7rem; opacity: 0.6; letter-spacing: 2px;">BREAK</div>
+        <div id="break-total" style="font-size: 1.5rem; font-weight: bold;">0m 0s</div>
+    </div>
+</div>
         }
 
         /* --- CONTROL BUTTONS --- */
@@ -174,3 +178,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
