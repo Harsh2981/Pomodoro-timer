@@ -72,6 +72,7 @@ function startTimer() {
 
     // Record the timestamp when we started or resumed
     startTime = Date.now();
+    
     // Remember where we left off (either timeLeft or stopwatchSecs)
     let initialTime = isStopwatch ? stopwatchSecs : timeLeft;
 
@@ -80,28 +81,48 @@ function startTimer() {
         const secondsPassed = Math.floor((currentTime - startTime) / 1000);
 
         if (isStopwatch) {
+            // STOPWATCH MODE: Count Up
             stopwatchSecs = initialTime + secondsPassed;
-            // Track total focus stats
+            // Track total focus stats (this increments every second the timer runs)
             focusSecs++; 
         } else {
+            // POMODORO MODE: Count Down
             timeLeft = initialTime - secondsPassed;
+
+            // Track stats based on whether we are in focus or break mode
+            if (!isBreak) {
+                focusSecs++;
+            } else {
+                breakSecs++;
+            }
+
+            // CHECK IF FINISHED
             if (timeLeft <= 0) {
                 timeLeft = 0;
                 updateDisplay();
                 pauseTimer();
-                alert(isBreak ? "Break's over!" : "Focus session done!");
+                
+                // 1. Start the repeating alarm
+                playAlarm(); 
+                
+                // 2. Show the alert (Blocks code here until OK is clicked)
+                alert(isBreak ? "Break's over! Ready to focus? 🌊" : "Focus session done! Take a break. ☕");
+                
+                // 3. Stop the alarm immediately after OK is clicked
+                stopAlarm(); 
                 return;
             }
-            // Track stats
-            if (!isBreak) focusSecs++; else breakSecs++;
         }
 
+        // Update the numbers on screen AND the browser tab title
         updateDisplay();
+        
+        // Update the Stats Island display
         document.getElementById('focus-total').innerText = `${Math.floor(focusSecs/60)}m ${focusSecs%60}s`;
         document.getElementById('break-total').innerText = `${Math.floor(breakSecs/60)}m ${breakSecs%60}s`;
+        
     }, 1000);
 }
-
 function pauseTimer() {
     clearInterval(timerVar);
     timerVar = null;
@@ -171,3 +192,28 @@ function loadTrack(idx) {
 
 function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); }
 function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); }
+
+// 7. Alarm Logic (Repeating Version)
+
+let isMuted = false;
+const alarmSound = new Audio("beep alarm final.mp3"); 
+alarmSound.loop = true; // This makes it repeat forever until stopped
+
+function toggleMute() {
+    isMuted = !isMuted;
+    const btn = document.getElementById('mute-btn');
+    btn.innerText = isMuted ? "OFF 🔇" : "ON 🔊";
+    btn.style.color = isMuted ? "#ff6b6b" : "#afffaf";
+}
+
+function playAlarm() {
+    if (!isMuted) {
+        alarmSound.currentTime = 0; // Restart from beginning
+        alarmSound.play().catch(e => console.log("Click the page once to enable audio."));
+    }
+}
+
+function stopAlarm() {
+    alarmSound.pause();
+    alarmSound.currentTime = 0;
+}
