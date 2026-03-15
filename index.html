@@ -25,10 +25,10 @@
     <meta name="google-site-verification" content="X0jDkOLlZfhkYQHPPcTD-as4DgMip59ykwxtzymYfMg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cozy Pomodoro | Aesthetic Timer</title>
-  <style>
+ <style>
         :root {
-            --glass: rgba(0, 0, 0, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(0, 0, 0, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
             --accent: #afffaf;
         }
 
@@ -39,12 +39,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: white;
             background-color: #1a1a1a;
             background-size: cover;
             background-position: center;
-            transition: background 1s ease;
+            transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
 
@@ -52,112 +52,133 @@
         nav {
             position: fixed;
             top: 0; width: 100%;
-            padding: 20px 40px;
+            padding: 25px 50px;
             display: flex;
             justify-content: space-between;
             box-sizing: border-box;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
             z-index: 100;
         }
 
-        .logo { cursor: pointer; font-weight: bold; letter-spacing: 2px; }
-        .nav-links span { margin-left: 20px; cursor: pointer; font-size: 0.8rem; opacity: 0.7; transition: 0.3s; }
+        .logo-group { display: flex; align-items: center; gap: 20px; }
+        .logo { font-weight: 800; letter-spacing: 2px; font-size: 1.2rem; cursor: default; }
+        
+        .nav-links span { margin-left: 25px; cursor: pointer; font-size: 0.85rem; font-weight: 600; opacity: 0.7; transition: 0.3s; letter-spacing: 1px; }
         .nav-links span:hover { opacity: 1; color: var(--accent); }
 
         /* --- Main UI --- */
         .stats-island {
             background: var(--glass);
-            backdrop-filter: blur(15px);
-            padding: 15px 30px;
-            border-radius: 20px;
-            display: flex; gap: 40px;
+            backdrop-filter: blur(20px);
+            padding: 18px 35px;
+            border-radius: 24px;
+            display: flex; gap: 50px;
             border: 1px solid var(--glass-border);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .stat-label { font-size: 0.6rem; opacity: 0.7; text-transform: uppercase; }
-        .stat-value { font-size: 1.1rem; font-weight: bold; }
+        .stat-label { font-size: 0.65rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+        .stat-value { font-size: 1.3rem; font-weight: 700; }
 
         .timer-display {
-            font-size: 10rem;
-            font-weight: 200;
-            margin: 10px 0;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 13rem; /* Larger font */
+            font-weight: 900; /* Extra Bold */
+            margin: -10px 0;
+            text-shadow: 0 15px 45px rgba(0,0,0,0.6);
+            letter-spacing: -5px;
+            font-variant-numeric: tabular-nums;
         }
+
+        .controls { display: flex; gap: 15px; margin-top: 20px; }
 
         .btn {
             background: var(--glass);
             border: 1px solid var(--glass-border);
             color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 14px 28px;
+            border-radius: 14px;
             cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
-        .btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+        .btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); border-color: var(--accent); }
 
         /* --- Side Panels --- */
         .side-panel {
             position: fixed;
-            top: 0; right: -350px;
-            width: 320px; height: 100%;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(20px);
-            padding: 80px 30px;
-            transition: 0.4s ease-in-out;
-            z-index: 90;
+            top: 0; right: -380px;
+            width: 340px; height: 100%;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(25px);
+            padding: 100px 40px;
+            transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 150;
             box-sizing: border-box;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
         }
         .side-panel.active { right: 0; }
-        #tasks-panel { left: -350px; right: auto; }
+        #tasks-panel { left: -380px; right: auto; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
         #tasks-panel.active { left: 0; }
 
         input {
             width: 100%;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             border: 1px solid var(--glass-border);
             color: white;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 10px;
             box-sizing: border-box;
+            outline: none;
         }
+        input:focus { border-color: var(--accent); }
 
-        /* --- Music Player --- */
+        /* --- Music Player (Bottom Left) --- */
         .music-bar {
             position: fixed;
-            bottom: 30px;
+            bottom: 35px;
+            left: 35px; /* Shifted to Bottom Left */
             background: var(--glass);
-            backdrop-filter: blur(15px);
-            padding: 12px 25px;
-            border-radius: 50px;
+            backdrop-filter: blur(20px);
+            padding: 14px 25px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             gap: 20px;
             border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            z-index: 80;
         }
 
-        .music-controls span { cursor: pointer; font-size: 1.2rem; }
-        #track-label { font-size: 0.7rem; opacity: 0.6; width: 120px; overflow: hidden; white-space: nowrap; }
+        .music-controls { display: flex; gap: 15px; align-items: center; }
+        .music-controls span { cursor: pointer; font-size: 1.3rem; transition: 0.2s; opacity: 0.8; }
+        .music-controls span:hover { transform: scale(1.2); opacity: 1; color: var(--accent); }
+        #track-label { font-size: 0.7rem; font-weight: 700; opacity: 0.7; letter-spacing: 1px; min-width: 100px; text-align: center; }
 
         /* --- Task List --- */
-        #todo-list { list-style: none; padding: 0; }
+        #todo-list { list-style: none; padding: 0; margin-top: 20px; }
         .todo-item {
-            background: rgba(255,255,255,0.05);
-            padding: 10px; border-radius: 8px;
-            margin-bottom: 8px; display: flex;
-            justify-content: space-between; font-size: 0.85rem;
+            background: rgba(255,255,255,0.06);
+            padding: 14px; border-radius: 12px;
+            margin-bottom: 12px; display: flex;
+            justify-content: space-between; font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo" onclick="changeBackground()">COZY POMO 🌊</div>
+        <div class="logo-group">
+            <div class="logo">COZY POMO 🌊</div>
+            <button class="btn" style="padding: 8px 15px; font-size: 0.6rem;" onclick="changeBackground()">Change BG</button>
+        </div>
         <div class="nav-links">
             <span onclick="togglePanel('tasks-panel')">TASKS</span>
             <span onclick="togglePanel('settings-panel')">SETTINGS</span>
@@ -166,11 +187,11 @@
 
     <div class="stats-island">
         <div>
-            <div class="stat-label">Focus Record</div>
+            <div class="stat-label">Focus Time</div>
             <div class="stat-value" id="focus-total">0m 0s</div>
         </div>
         <div>
-            <div class="stat-label">Break Record</div>
+            <div class="stat-label">Break Time</div>
             <div class="stat-value" id="break-total">0m 0s</div>
         </div>
     </div>
@@ -185,24 +206,24 @@
     </div>
 
     <div class="side-panel" id="settings-panel">
-        <h3 style="color:var(--accent)">Settings ⚙️</h3>
-        <label style="font-size: 0.7rem;">ALARM SOUND</label>
-        <button id="mute-btn" class="btn" style="width:100%; margin-bottom: 20px;" onclick="toggleMute()">ON 🔊</button>
+        <h2 style="color:var(--accent); margin-bottom: 30px;">Settings</h2>
+        <label style="font-size: 0.7rem; font-weight: 700;">ALARM SOUND</label>
+        <button id="mute-btn" class="btn" style="width:100%; margin-top: 10px; margin-bottom: 30px;" onclick="toggleMute()">ON 🔊</button>
         
-        <label style="font-size: 0.7rem;">FOCUS MINS</label>
+        <label style="font-size: 0.7rem; font-weight: 700;">FOCUS DURATION (MIN)</label>
         <input type="number" id="focus-input" value="25">
         
-        <label style="font-size: 0.7rem;">BREAK MINS</label>
+        <label style="font-size: 0.7rem; font-weight: 700;">BREAK DURATION (MIN)</label>
         <input type="number" id="break-input" value="5">
         
-        <button class="btn" style="width:100%; margin-top: 10px;" onclick="applySettings()">Apply Changes</button>
-        <button class="btn" style="width:100%; margin-top: 40px; color: #ff6b6b;" onclick="resetStats()">Reset All Progress</button>
+        <button class="btn" style="width:100%; margin-top: 15px; border-color: var(--accent);" onclick="applySettings()">Save Settings</button>
+        <button class="btn" style="width:100%; margin-top: 50px; color: #ff6b6b; border-color: #ff6b6b;" onclick="resetStats()">Wipe Records</button>
     </div>
 
     <div class="side-panel" id="tasks-panel">
-        <h3 style="color:var(--accent)">Task List ✅</h3>
-        <input type="text" id="todo-input" placeholder="What's the plan?">
-        <button class="btn" style="width:100%" onclick="addTask()">Add Task</button>
+        <h2 style="color:var(--accent); margin-bottom: 30px;">To-Do List</h2>
+        <input type="text" id="todo-input" placeholder="Enter a task...">
+        <button class="btn" style="width:100%" onclick="addTask()">Add To List</button>
         <ul id="todo-list"></ul>
     </div>
 
@@ -219,8 +240,12 @@
         // --- 1. CONFIG & STATE ---
         const images = [
             "Grey Mountains.jpg",
+            "Green water.jpg",
             "The street.jpg",
-            "Green water.jpg"
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80",
+            "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80",
+            "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1920&q=80",
+            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80"
         ];
         let currentImg = 0;
         
@@ -231,24 +256,27 @@
         let isBreak = false;
         let startTime;
 
-        // Alarm & Music
         let isMuted = false;
         const alarmSound = new Audio("beep alarm final.mp3"); 
         alarmSound.loop = true;
-
-        const tracks = ["Alpha waves 1.mp3", "White Noise 1.mp3"];
+        
+        const trackFiles = [
+    "Alpha waves 1.mp3", 
+    "White Noise 1.mp3"
+    ];
+        const tracks = ["Alpha Waves", "White noise"];
         let currentTrack = 0, playing = false;
-        let audio = new Audio(tracks[currentTrack]);
+        let audio = new Audio(); // Placeholder for actual mp3 links
         audio.loop = true;
 
         // --- 2. PERSISTENCE ---
         function saveProgress() {
             const data = { focusSecs, breakSecs, focusMins, breakMins, currentImg };
-            localStorage.setItem('cozyPomoFullData', JSON.stringify(data));
+            localStorage.setItem('cozyPomoUltimateData', JSON.stringify(data));
         }
 
         function loadProgress() {
-            const saved = localStorage.getItem('cozyPomoFullData');
+            const saved = localStorage.getItem('cozyPomoUltimateData');
             if (saved) {
                 const d = JSON.parse(saved);
                 focusSecs = d.focusSecs || 0;
@@ -282,9 +310,6 @@
 
         function startTimer() {
             if (timerVar) return;
-            // Unlock audio
-            alarmSound.play().then(() => { alarmSound.pause(); alarmSound.currentTime = 0; }).catch(()=>{});
-            
             startTime = Date.now();
             let initialTime = timeLeft;
 
@@ -297,8 +322,8 @@
                 if (timeLeft <= 0) {
                     timeLeft = 0;
                     pauseTimer();
-                    if(!isMuted) { alarmSound.play(); }
-                    alert(isBreak ? "Break Over!" : "Focus Complete!");
+                    if(!isMuted) alarmSound.play();
+                    alert(isBreak ? "Break is over! Time to focus." : "Session complete! Enjoy your break.");
                     alarmSound.pause(); alarmSound.currentTime = 0;
                 }
                 
@@ -323,7 +348,7 @@
             startTimer();
         }
 
-        // --- 4. UI FEATURES ---
+        // --- 4. UI HANDLERS ---
         function togglePanel(id) {
             const panel = document.getElementById(id);
             const isActive = panel.classList.contains('active');
@@ -346,55 +371,63 @@
         }
 
         function updateBackground() {
-            document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${images[currentImg]}')`;
+            document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('${images[currentImg]}')`;
         }
-
+        
         function toggleMute() {
             isMuted = !isMuted;
             document.getElementById('mute-btn').innerText = isMuted ? "OFF 🔇" : "ON 🔊";
         }
 
-        function toggleMusic() {
-            if (playing) { audio.pause(); document.getElementById('play-pause-btn').innerText = '▶'; }
-            else { audio.play(); document.getElementById('play-pause-btn').innerText = '⏸'; }
-            playing = !playing;
-        }
-
         function loadTrack(idx) {
-            audio.pause();
-            currentTrack = idx;
-            audio = new Audio(tracks[currentTrack]);
-            audio.loop = true;
-            document.getElementById('track-label').innerText = tracks[currentTrack].split('.')[0].toUpperCase();
-            if (playing) audio.play();
-        }
+    audio.pause();
+    currentTrack = idx;
+    audio = new Audio(trackFiles[currentTrack]); // Loads the new file address
+    audio.loop = true;
+    document.getElementById('track-label').innerText = tracks[currentTrack].toUpperCase();
+    if (playing) audio.play();
+}
 
-        function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); }
-        function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); }
+// 3. Update toggleMusic to actually trigger the audio
+function toggleMusic() {
+    if (playing) {
+        audio.pause();
+        document.getElementById('play-pause-btn').innerText = '▶';
+    } else {
+        // The browser requires a user click to play audio
+        audio.play().catch(e => console.log("Click the page first to play music"));
+        document.getElementById('play-pause-btn').innerText = '⏸';
+    }
+    playing = !playing;
+}
+
+// 4. Update the Next/Prev functions to call loadTrack
+function nextTrack() {
+    loadTrack((currentTrack + 1) % tracks.length);
+}
+
+function prevTrack() {
+    loadTrack((currentTrack - 1 + tracks.length) % tracks.length);
+}
 
         function addTask() {
             const val = document.getElementById('todo-input').value;
             if (!val) return;
             const li = document.createElement('li');
             li.className = 'todo-item';
-            li.innerHTML = `<span>${val}</span><span style="cursor:pointer" onclick="this.parentElement.remove()">✕</span>`;
+            li.innerHTML = `<span>${val}</span><span style="cursor:pointer; color: #ff6b6b" onclick="this.parentElement.remove()">✕</span>`;
             document.getElementById('todo-list').appendChild(li);
             document.getElementById('todo-input').value = "";
         }
 
         function resetStats() {
-            if(confirm("Wipe all progress?")) {
+            if(confirm("Permanently wipe all session records?")) {
                 focusSecs = 0; breakSecs = 0;
                 saveProgress(); updateStatsUI();
             }
         }
 
         // Init
-        loadProgress();
-        updateBackground();
-    </script>
-</body>
-</html>
         loadProgress();
     </script>
 </body>
